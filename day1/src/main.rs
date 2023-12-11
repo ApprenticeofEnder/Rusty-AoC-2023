@@ -2,8 +2,8 @@ use std::fs::File;
 use std::io::prelude::*;
 
 use reqwest::{
-    multipart::{Form, Part},
-    Client, Response,
+    multipart::Form,
+    Client, Response, StatusCode
 };
 
 async fn send_msg(msg: &str, url: &String) -> Result<String, reqwest::Error> {
@@ -11,6 +11,8 @@ async fn send_msg(msg: &str, url: &String) -> Result<String, reqwest::Error> {
     let form: Form = Form::new().text("msg", msg.to_owned());
 
     let res: Response = client.post(url).multipart(form).send().await?;
+
+    res.error_for_status_ref()?;
 
     let response_text: String = res.text().await?;
     println!("{}", response_text);
@@ -32,7 +34,14 @@ async fn main() -> Result<(), reqwest::Error> {
         "https://{ip}.p.thmlabs.com/message",
         ip = ip.replace(".", "-")
     );
-    send_msg("hello", &url).await?;
+
+    match send_msg("hello", &url).await {
+        Ok(_) => println!("Server online. Proceeding."),
+        Err(err) => {
+            println!("Error encountered! Status code: {:?}", err.status().unwrap());
+            return Err(err);
+        }
+    }
 
     let email: String = send_msg("What is the personal address of the CEO, McGreedy?", &url).await?;
 
