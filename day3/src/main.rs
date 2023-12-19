@@ -29,7 +29,11 @@ fn get_combinations(n: i32) -> Vec<String> {
     )
 }
 
-async fn brute_force(client: &Client, combinations: &Vec<String>, ip: &str) -> Result<Option<String>, Error>{
+async fn brute_force(
+    client: &Client,
+    combinations: &Vec<String>,
+    ip: &str,
+) -> Result<Option<String>, Error> {
     let mut brute_results = stream::iter(combinations)
         .map(|combination: &String| {
             let client: &Client = &client;
@@ -82,7 +86,6 @@ async fn brute_force(client: &Client, combinations: &Vec<String>, ip: &str) -> R
 
 #[tokio::main]
 async fn main() -> Result<(), reqwest::Error> {
-
     let combinations: Vec<_> = get_combinations(3);
     // println!("{:?}", combinations);
 
