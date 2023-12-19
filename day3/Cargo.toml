@@ -11,3 +11,4 @@ futures = "0.3" # for our async / await blocks
 tokio = { version = "1.12.0", features = ["full"] } # for our async runtime
 itertools = "0.12.0"
 soup = "0.5.1"
+argparse = "0.2.2"
