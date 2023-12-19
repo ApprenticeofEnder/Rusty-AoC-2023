@@ -1,7 +1,7 @@
 use std::fs::File;
 use std::io::prelude::*;
 
-use reqwest::{multipart::Form, Client, Response, StatusCode};
+use reqwest::{multipart::Form, Client, Response};
 
 async fn send_msg(msg: &str, url: &String) -> Result<String, reqwest::Error> {
     let client: Client = reqwest::Client::new();
