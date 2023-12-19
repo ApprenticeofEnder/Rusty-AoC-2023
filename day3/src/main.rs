@@ -105,7 +105,7 @@ async fn main() -> Result<(), reqwest::Error> {
             println!("Flag found: {}", tag.text());
         }
         None => {
-            println!("No flag found.")
+            println!("No flag found.");
         }
     };
 
