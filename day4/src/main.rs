@@ -19,7 +19,7 @@ struct Config {
     pw_depth: u8,
     pw_min_length: usize,
     uname_start_url: String,
-    uname_depth: u8,
+    // uname_depth: u8,
     uname_min_length: usize,
 }
 
@@ -52,7 +52,7 @@ impl Default for Config {
             pw_depth: 2,
             pw_min_length: 5,
             uname_start_url: Default::default(),
-            uname_depth: 0,
+            // uname_depth: 0,
             uname_min_length: 5,
         }
     }
