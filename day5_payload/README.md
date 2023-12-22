@@ -1,3 +1,7 @@
+# Day 5 Payload Builder
+
+Credit to [ov8m](https://github.com/o8vm) for the base code on this.
+
 # Rust DOS (Creating a DOS executable with Rust)
 
 It is possible to create a DOS executable or 1st stage bootloader with Rust.  
