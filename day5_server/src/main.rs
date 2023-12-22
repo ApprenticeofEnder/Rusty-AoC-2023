@@ -11,11 +11,23 @@ use zip::write::FileOptions;
 use actix_files::NamedFile;
 use actix_web::{get, middleware, web, App, HttpRequest, HttpResponse, HttpServer};
 
+// use actix_web::{error, post, Error};
+// use futures::StreamExt;
+// use serde::{Deserialize, Serialize};
+
+// const MAX_SIZE: usize = 262_144;
+
+// #[derive(Serialize, Deserialize)]
+// struct FileData {
+//     filename: String,
+//     number: i32,
+// }
+
 struct Config {
     filename: String,
 }
 
-fn read_target_contents(filepath: &PathBuf) -> std::io::Result<Vec<u8>>{
+fn read_target_contents(filepath: &PathBuf) -> std::io::Result<Vec<u8>> {
     let mut file: File = File::open(filepath)?;
     let mut contents: Vec<u8> = Vec::new();
     file.read_to_end(&mut contents)?;
@@ -60,6 +72,9 @@ async fn file_dl(data: web::Data<Config>, req: HttpRequest) -> HttpResponse {
     res
 }
 
+// #[post("/fix")]
+// async fn file_fix()
+
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     let mut filename: String = Default::default();
@@ -82,7 +97,7 @@ async fn main() -> std::io::Result<()> {
             .service(file_dl)
     })
     .bind(("0.0.0.0", 8080))?;
-    
+
     let addresses: Vec<std::net::SocketAddr> = server.addrs();
 
     addresses.iter().for_each(|addr| {

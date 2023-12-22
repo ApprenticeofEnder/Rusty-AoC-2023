@@ -5,7 +5,6 @@ extern crate alloc;
 
 mod dos_tests;
 
-use alloc::string::ToString;
 use day5_payload::{*, dos::file::File};
 
 entry!(main);
@@ -13,19 +12,13 @@ entry!(main);
 fn main() {
     let filename_src: &str = "TEST.TXT";
 
-    let filename_out: &str = &(filename_src.to_string() + ".BAK");
+    let filename_out: &str = "TEST_2.TXT";
 
     let fix_bytes: [u8; 2] = [0x41, 0x43];
 
     println!("Opening: {}", filename_src);
 
     let src_file: File = File::open(filename_src).expect("Check file name and try again?");
-
-    println!("Opening for write: {}", filename_out);
-
-    let out_file: File = File::open(filename_out).expect("Error opening outfile.");
-
-    println!("Opened files.");
 
     println!("Reading...");
 
@@ -36,6 +29,12 @@ fn main() {
     println!("Read {} bytes", bytes_read);
 
     src_file.close().unwrap();
+
+    println!("Closed source file.");
+
+    println!("Opening for write: {}", filename_out);
+
+    let out_file: File = File::open(filename_out).expect("Error opening outfile.");
     
     fix_bytes.iter().enumerate().for_each(|(index, byte)| {
         buf[index] = *byte;
