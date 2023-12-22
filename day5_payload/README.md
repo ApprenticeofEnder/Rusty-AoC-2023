@@ -1,6 +1,8 @@
-# Day 5 Payload Builder
+# Day 5 Payload Builder (DEPRECATED)
 
 Credit to [ov8m](https://github.com/o8vm) for the base code on this.
+
+This version of the payload builder is deprecated. Use `day5_payload_v2` instead.
 
 # Rust DOS (Creating a DOS executable with Rust)
 
