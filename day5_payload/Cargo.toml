@@ -1,0 +1,12 @@
+[package]
+name = "day5_payload"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[profile.release]
+opt-level = "z"
+
+[dependencies]
+rlibc = "1.0.0"
