@@ -73,7 +73,7 @@ async fn main() -> std::io::Result<()> {
         ap.parse_args_or_exit();
     }
 
-    HttpServer::new(move || {
+    let server = HttpServer::new(move || {
         App::new()
             .app_data(web::Data::new(Config {
                 filename: filename.clone(),
@@ -81,7 +81,13 @@ async fn main() -> std::io::Result<()> {
             .wrap(middleware::Compress::default())
             .service(file_dl)
     })
-    .bind(("0.0.0.0", 8080))?
-    .run()
-    .await
+    .bind(("0.0.0.0", 8080))?;
+    
+    let addresses: Vec<std::net::SocketAddr> = server.addrs();
+
+    addresses.iter().for_each(|addr| {
+        println!("Listening on {:?}", addr);
+    });
+
+    server.run().await
 }
