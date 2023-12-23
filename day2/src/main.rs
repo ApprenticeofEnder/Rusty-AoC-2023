@@ -1,7 +1,7 @@
 use polars::error::PolarsResult;
 use polars::{lazy::dsl::count, prelude::*};
 
-fn most_popular<'a>(column: &'a str, df: &'a DataFrame) -> PolarsResult<DataFrame> {
+fn most_popular(column: &str, df: &DataFrame) -> PolarsResult<DataFrame> {
     Ok(df
         .clone()
         .lazy()
