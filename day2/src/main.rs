@@ -2,16 +2,16 @@ use polars::error::PolarsResult;
 use polars::{lazy::dsl::count, prelude::*};
 
 fn main() -> PolarsResult<()> {
-    let df = CsvReader::from_path("data/network_traffic.csv")
-        .unwrap()
-        .finish()?;
+    let df = CsvReader::from_path("data/network_traffic.csv")?.finish()?;
 
     //Task 1: Count the Packets
     let processed1 = df.clone().lazy().select([count()]).collect()?;
 
-    let res1 = processed1["count"].iter().next().unwrap();
-
-    println!("Number of packets in file: {}", res1);
+    if let Some(res1) = processed1["count"].iter().next() {
+        println!("Number of packets in file: {}", res1);
+    } else {
+        println!("Something went wrong with task 1.");
+    }
 
     //Task 2
     let processed2 = df
@@ -29,9 +29,12 @@ fn main() -> PolarsResult<()> {
         )
         .limit(1)
         .collect()?;
-    let res2 = processed2["Source"].iter().next().unwrap();
 
-    println!("Most frequent sender: {}", res2.get_str().unwrap());
+    if let Some(res2) = processed2["Source"].iter().next() {
+        println!("Most frequent sender: {}", res2.get_str().unwrap());
+    } else {
+        println!("Something went wrong with task 2.");
+    }
 
     //Task 3
     let processed3 = df
@@ -50,8 +53,10 @@ fn main() -> PolarsResult<()> {
         .limit(1)
         .collect()?;
 
-    let res3 = processed3["Protocol"].iter().next().unwrap();
-
-    println!("Most frequent protocol: {}", res3.get_str().unwrap());
+    if let Some(res3) = processed3["Protocol"].iter().next() {
+        println!("Most frequent protocol: {}", res3.get_str().unwrap());
+    } else {
+        println!("Something went wrong with task 3.");
+    }
     Ok(())
 }
