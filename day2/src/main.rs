@@ -1,5 +1,5 @@
-use polars::{lazy::dsl::count, prelude::*};
 use polars::error::PolarsResult;
+use polars::{lazy::dsl::count, prelude::*};
 
 fn main() -> PolarsResult<()> {
     let df = CsvReader::from_path("data/network_traffic.csv")
